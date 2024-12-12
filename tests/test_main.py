@@ -5,31 +5,70 @@ from main import extract_text_from_area
 
 # Get the absolute path to the test_images directory
 TEST_IMAGES_DIR = os.path.join(os.path.dirname(__file__), 'test_images')
-civilization_box = (5, 780, 90, 794)
-population_box = (770, 23, 840, 50)
-resources_box = (30, 0, 260, 20)
+civilization_box = (5, 780, 90, 796)
+population_box = (802, 23, 840, 50)
+wood_box = (30, 2, 60, 17)
+food_box = (97, 2, 130, 17)
+gold_box = (163, 2, 200, 17)
+stone_box = (232, 2, 270, 17)
 age_box = (760, 0, 850, 20)
-image_path = os.path.join(TEST_IMAGES_DIR, 'town-center-assyrian.png')
+timeline_box = (2, 26, 55, 40)
+assyrian_image = os.path.join(TEST_IMAGES_DIR, 'town-center-assyrian.png')
+minoan_image = os.path.join(TEST_IMAGES_DIR, 'minoan.png')
+
+test_Assyrian_image = Image.open(assyrian_image)
+test_Minoan_image = Image.open(minoan_image)
 
 def test_extract_civilization_name():
-    test_image = Image.open(image_path)
-    extracted_text = extract_text_from_area(test_image, civilization_box)
+    extracted_text = extract_text_from_area(test_Assyrian_image, civilization_box)
     assert "Assyrian" in extracted_text
 
-def test_extract_population():
-    test_image = Image.open(image_path)
-    extracted_text = extract_text_from_area(test_image, population_box)
-    assert extracted_text == "pop: 3/4"
+    extracted_text = extract_text_from_area(test_Minoan_image, civilization_box)
+    assert "Minoan" in extracted_text
 
-# def test_extract_resources():
-#     test_image = Image.open(image_path)
-#     extracted_text = extract_text_from_area(test_image, resources_box)
-#     assert extracted_text == "200 200 0 150"
+def test_extract_population():
+    extracted_text = extract_text_from_area(test_Assyrian_image, population_box, True)
+    assert extracted_text == "3/4"
+
+    extracted_text = extract_text_from_area(test_Minoan_image, population_box, True)
+    assert extracted_text == "5/8"
+
+def test_extract_resources_wood():
+    extracted_text = extract_text_from_area(test_Assyrian_image, wood_box, True)
+    assert extracted_text == "200"
+    extracted_text = extract_text_from_area(test_Minoan_image, wood_box, True)
+    assert extracted_text == "170"
+
+def test_extract_resources_food():
+    extracted_text = extract_text_from_area(test_Assyrian_image, food_box, True)
+    assert extracted_text == "200"
+    extracted_text = extract_text_from_area(test_Minoan_image, food_box, True)
+    assert extracted_text == "50"
+
+def test_extract_resources_gold():
+    extracted_text = extract_text_from_area(test_Assyrian_image, gold_box, True)
+    assert int(extracted_text) < 10
+    extracted_text = extract_text_from_area(test_Minoan_image, gold_box, True)
+    assert int(extracted_text) < 10
+
+def test_extract_resources_stone():
+    extracted_text = extract_text_from_area(test_Assyrian_image, stone_box, True)
+    assert extracted_text == "150"
+    extracted_text = extract_text_from_area(test_Minoan_image, stone_box, True)
+    assert extracted_text == "150"
 
 def test_extract_age():
-    test_image = Image.open(image_path)
-    extracted_text = extract_text_from_area(test_image, age_box)
+    extracted_text = extract_text_from_area(test_Assyrian_image, age_box)
     assert "Stone" in extracted_text
+    extracted_text = extract_text_from_area(test_Minoan_image, age_box)
+    assert "Stone" in extracted_text
+
+def test_extract_timeline():
+    extracted_text = extract_text_from_area(test_Assyrian_image, timeline_box, True)
+    assert extracted_text == "00:00:24"
+    extracted_text = extract_text_from_area(test_Minoan_image, timeline_box, True)
+    assert extracted_text == "00:03:21"
+
 # def test_extract_text_from_area_invalid_bbox():
 #     # Load a test image
 #     test_image = Image.open('tests/test_images/sample_text.png')
